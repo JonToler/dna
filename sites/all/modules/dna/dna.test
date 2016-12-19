@@ -77,6 +77,17 @@ class DnaModuleTests extends DrupalWebTestCase {
         parent::setUp(array('dna'));
     }
 
+    public function testDnaValid() {
+        $this->drupalGet('dna');
+
+        $this->assertText("DNA Strand Assembler", 'Form displayed!');
+
+        $form = array();
+        $form['input_strand'] = 'TAGC';
+        $this->drupalPost('dna', $form, t('assemble'));
+
+        $this->assertText("Assembled DNA strand!", 'Output displayed!');
+    }
 
 
 }
