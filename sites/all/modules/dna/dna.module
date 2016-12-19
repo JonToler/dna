@@ -1,0 +1,78 @@
+<?php
+
+function dna_menu() {
+    $items['dna'] = array(
+        'title' => 'DNA Strand Assembler',
+        'page callback' => 'drupal_get_form',
+        'page arguments' => array('dna_form'),
+        'access callback' => TRUE,
+        'type' => MENU_NORMAL_ITEM,
+    );
+    $items['dna_assembled'] = array(
+        'title' => 'Assembled DNA strand!',
+        'page callback' => 'dna_output',
+        'access callback' => TRUE,
+        'type' => MENU_CALLBACK,
+    );
+    return $items;
+}
+
+function dna_form() {
+    $form['input_strand'] = array(
+        '#title' => 'Input Strand',
+        '#type' => 'textfield',
+        '#description' => t('Enter the strand to assemble'),
+        '#required' => TRUE,
+        '#element_validate' => array('element_validate_strand'),
+    );
+    $form['submit'] = array(
+        '#type' => 'submit',
+        '#value' => 'assemble',
+    );
+    return $form;
+}
+
+function element_validate_strand($element) {
+    if (preg_match("/[^ATCG]/", $element['#value'])) {
+        form_error($element, t('Only the case sensitive letters A, T, C, and G are accepted.'));
+    }
+}
+
+function dna_form_submit($form, &$form_state) {
+    $input_strand = $form_state['values']['input_strand'];
+    $output_strand = dna_find_strand($input_strand);
+    $_SESSION['dna_input'] = $input_strand;
+    $_SESSION['dna_output'] = $output_strand;
+    $form_state['redirect'] = 'dna_assembled';
+}
+
+function dna_output() {
+    $input_strand = $_SESSION['dna_input'];
+    $output_strand = $_SESSION['dna_output'];
+    return '1st strand:' . $input_strand . '<br>'.' 2nd strand: ' . $output_strand;
+}
+
+function dna_find_pair($input) {
+    if ($input == 'A') {
+        return 'T';
+    } elseif ($input == 'T') {
+        return 'A';
+    } elseif ($input == 'C') {
+        return 'G';
+    } elseif ($input == 'G') {
+        return 'C';
+    } else {
+        return '';
+    }
+}
+
+function dna_find_strand($input) {
+    $input_array = str_split($input);
+    $output_array = array();
+    foreach ($input_array as $input_letter) {
+        if (preg_match('/[ATCG]/', $input_letter)) {
+            $output_array[] = dna_find_pair($input_letter);
+        }
+    }
+    return join('', $output_array);
+}
