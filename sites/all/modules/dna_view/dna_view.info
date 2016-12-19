@@ -2,4 +2,4 @@ name = My DNA ul views module
 description = Display Nodes with Ajax.
 package = Epicodus Examples
 core = 7.x
-files[] = dna.module
+files[] = dna_view.module

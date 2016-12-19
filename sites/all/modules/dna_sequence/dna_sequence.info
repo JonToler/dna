@@ -1,7 +1,0 @@
-name = My DNA sequence module
-description = Display the matching pair in a double helix DNA sequence
-package = Epicodus Examples
-core = 7.x
-files[] = dna_sequence.module
-files[] = dna_sequence.test
-dependencies[] = simpletest
